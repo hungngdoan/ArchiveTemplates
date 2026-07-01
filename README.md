@@ -14,6 +14,8 @@ source of truth for any live site.
 - JSX design labs and layout explorations
 - Static assets used by those prototypes
 - Archived tracker or page concepts that have since moved elsewhere
+- `web-launch-kit/` — reusable architecture blueprint, drop-in `<head>` (SEO +
+  social card), and an `og:image` generator distilled from real site builds
 
 ## Notes
 

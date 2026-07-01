@@ -1,0 +1,61 @@
+<!--
+  Reusable <head> for a public web app / static site.
+  Copy into your base layout and replace the {{PLACEHOLDERS}}.
+
+  RULE: anything public-facing ships the social card from commit one.
+  The text tags are free; the og:image is the one that gets forgotten
+  and the one that makes a shared link look finished instead of broken.
+
+  ABSOLUTE URLS ARE REQUIRED for canonical + og:image + twitter:image.
+  Crawlers (Facebook/Messenger, LinkedIn, Slack, X) cannot resolve a
+  relative path and cannot reach localhost or a LAN IP. Previews only
+  work on the deployed public URL.
+-->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Core -->
+  <title>{{TITLE}}</title>
+  <meta name="description" content="{{DESCRIPTION}}" />
+  <link rel="canonical" href="{{CANONICAL_URL}}" />
+  <meta name="author" content="{{AUTHOR}}" />
+
+  <!-- Icons -->
+  <link rel="icon" href="{{BASE}}/favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="{{BASE}}/apple-touch-icon.png" />
+
+  <!-- Open Graph (Facebook, Messenger, LinkedIn, Slack, iMessage) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="{{SITE_NAME}}" />
+  <meta property="og:url" content="{{CANONICAL_URL}}" />
+  <meta property="og:title" content="{{TITLE}}" />
+  <meta property="og:description" content="{{DESCRIPTION}}" />
+  <meta property="og:image" content="{{OG_IMAGE_URL}}" /> <!-- absolute, 1200x630 PNG/JPG -->
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:alt" content="{{OG_IMAGE_ALT}}" />
+
+  <!-- X / Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="{{TITLE}}" />
+  <meta name="twitter:description" content="{{DESCRIPTION}}" />
+  <meta name="twitter:image" content="{{OG_IMAGE_URL}}" />
+
+  <!-- Optional: theme color for mobile browser chrome -->
+  <meta name="theme-color" content="{{THEME_COLOR}}" />
+</head>
+
+<!--
+  AFTER DEPLOY, the preview will not appear until the crawler re-scrapes.
+  Force it once and the cache updates:
+    Facebook / Messenger:  https://developers.facebook.com/tools/debug/  -> Scrape Again
+    LinkedIn:              https://www.linkedin.com/post-inspector/
+    X / Twitter:           https://cards-dev.twitter.com/validator (or just post)
+  Notes:
+    - fb:app_id is NOT required. The "missing fb:app_id" warning is advisory.
+    - Each client (iOS app vs desktop/web) caches separately and at
+      different times, so one may show the card before another. Old
+      messages never retroactively update; send a NEW message to test.
+-->
