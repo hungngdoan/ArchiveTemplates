@@ -1,0 +1,2573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="light dark" />
+  <title>Sakura Study Library</title>
+  <script>
+    (() => {
+      try {
+        const savedTheme = localStorage.getItem("sakura-study-theme");
+        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        document.documentElement.dataset.theme = savedTheme || (prefersDark ? "dark" : "light");
+      } catch {
+        document.documentElement.dataset.theme = "light";
+      }
+    })();
+  </script>
+  <style>
+    :root {
+      --pink: #d94f7d;
+      --pink-strong: #b93665;
+      --pink-soft: #fff0f5;
+      --pink-pale: #fff8fb;
+      --ink: #2f2930;
+      --muted: #716873;
+      --line: #eadfe4;
+      --surface: #ffffff;
+      --surface-2: #fbf8fa;
+      --success: #31785a;
+      --shadow: 0 14px 34px rgba(89, 55, 69, 0.10);
+      --shadow-soft: 0 7px 18px rgba(89, 55, 69, 0.08);
+      --radius-lg: 24px;
+      --radius-md: 17px;
+      --radius-sm: 11px;
+      --focus: 0 0 0 3px rgba(217, 79, 125, 0.28);
+    }
+
+
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --pink: #ff78a5;
+      --pink-strong: #ff9bbb;
+      --pink-soft: #392631;
+      --pink-pale: #171317;
+      --ink: #f8eef2;
+      --muted: #c5b6bd;
+      --line: #493842;
+      --surface: #211b20;
+      --surface-2: #2a2228;
+      --success: #83cba8;
+      --shadow: 0 16px 38px rgba(0, 0, 0, 0.34);
+      --shadow-soft: 0 8px 20px rgba(0, 0, 0, 0.24);
+      --focus: 0 0 0 3px rgba(255, 120, 165, 0.38);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 9% 4%, rgba(217, 79, 125, 0.08), transparent 24rem),
+        radial-gradient(circle at 94% 22%, rgba(217, 79, 125, 0.06), transparent 22rem),
+        var(--pink-pale);
+      color: var(--ink);
+      font-family: ui-rounded, "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+      line-height: 1.55;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button,
+    [role="button"] {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    [tabindex]:focus-visible,
+    a:focus-visible {
+      outline: none;
+      box-shadow: var(--focus);
+    }
+
+    .sr-only {
+      position: absolute !important;
+      width: 1px !important;
+      height: 1px !important;
+      padding: 0 !important;
+      margin: -1px !important;
+      overflow: hidden !important;
+      clip: rect(0, 0, 0, 0) !important;
+      white-space: nowrap !important;
+      border: 0 !important;
+    }
+
+    .skip-link {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      z-index: 9999;
+      transform: translateY(-180%);
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: var(--ink);
+      color: white;
+      text-decoration: none;
+    }
+
+    .skip-link:focus {
+      transform: translateY(0);
+    }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      border-bottom: 1px solid rgba(234, 223, 228, 0.92);
+      background: rgba(255, 248, 251, 0.92);
+      backdrop-filter: blur(16px);
+    }
+
+    .header-inner {
+      width: min(1180px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 14px 0 12px;
+    }
+
+    .header-top {
+      display: grid;
+      grid-template-columns: auto minmax(240px, 1fr) auto;
+      gap: 22px;
+      align-items: center;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      min-width: max-content;
+      border: 0;
+      background: transparent;
+      color: var(--ink);
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 14px;
+      text-align: left;
+    }
+
+    .brand-mark {
+      display: grid;
+      width: 42px;
+      height: 42px;
+      place-items: center;
+      border: 1px solid #f1c6d5;
+      border-radius: 15px;
+      background: white;
+      box-shadow: var(--shadow-soft);
+      font-size: 23px;
+    }
+
+    .brand-copy strong {
+      display: block;
+      font-size: 1rem;
+      letter-spacing: 0.01em;
+    }
+
+    .brand-copy span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.78rem;
+    }
+
+    .global-search {
+      position: relative;
+      width: 100%;
+    }
+
+    .global-search input {
+      width: 100%;
+      height: 46px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: white;
+      color: var(--ink);
+      padding: 0 46px 0 43px;
+      box-shadow: 0 6px 18px rgba(89, 55, 69, 0.05);
+    }
+
+    .global-search input::placeholder {
+      color: #918892;
+    }
+
+    .global-search-icon {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      pointer-events: none;
+    }
+
+    .global-search button {
+      position: absolute;
+      right: 6px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 34px;
+      height: 34px;
+      border: 0;
+      border-radius: 50%;
+      background: var(--pink);
+      color: white;
+      cursor: pointer;
+    }
+
+
+    .theme-toggle {
+      display: inline-grid;
+      width: 46px;
+      height: 46px;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      background: var(--surface);
+      color: var(--ink);
+      box-shadow: var(--shadow-soft);
+      cursor: pointer;
+      font-size: 1.12rem;
+    }
+
+    .theme-toggle:hover {
+      border-color: #e9acc3;
+      background: var(--pink-soft);
+      transform: translateY(-1px) rotate(-5deg);
+    }
+
+    .theme-toggle[aria-pressed="true"]:hover {
+      transform: translateY(-1px) rotate(5deg);
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 6px;
+      margin-top: 12px;
+      padding: 5px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.76);
+    }
+
+    .tab-button {
+      position: relative;
+      border: 0;
+      border-radius: 12px;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 9px 12px;
+      font-weight: 700;
+    }
+
+    .tab-button:hover {
+      background: var(--pink-soft);
+      color: var(--ink);
+    }
+
+    .tab-button[aria-selected="true"] {
+      background: white;
+      color: var(--pink-strong);
+      box-shadow: 0 4px 12px rgba(89, 55, 69, 0.10);
+    }
+
+    main {
+      width: min(1180px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 30px 0 64px;
+    }
+
+    .panel[hidden] {
+      display: none;
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 20px;
+    }
+
+    .eyebrow {
+      margin: 0 0 4px;
+      color: var(--pink-strong);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin-top: 0;
+    }
+
+    h1,
+    h2,
+    h3 {
+      line-height: 1.18;
+      letter-spacing: -0.02em;
+    }
+
+    h1 {
+      margin-bottom: 12px;
+      font-size: clamp(2.15rem, 5vw, 4.5rem);
+    }
+
+    h2 {
+      margin-bottom: 6px;
+      font-size: clamp(1.7rem, 3vw, 2.45rem);
+    }
+
+    h3 {
+      margin-bottom: 7px;
+      font-size: 1.08rem;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(240px, 0.75fr);
+      gap: 28px;
+      align-items: center;
+      padding: clamp(25px, 5vw, 50px);
+      border: 1px solid var(--line);
+      border-radius: 30px;
+      background:
+        linear-gradient(135deg, white, #fff5f8 70%);
+      box-shadow: var(--shadow);
+    }
+
+    .hero::after {
+      content: "✿";
+      position: absolute;
+      right: 34%;
+      top: -40px;
+      color: rgba(217, 79, 125, 0.08);
+      font-size: 220px;
+      transform: rotate(14deg);
+      pointer-events: none;
+    }
+
+    .hero-copy {
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-copy p {
+      max-width: 680px;
+      color: var(--muted);
+      font-size: 1.04rem;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    .primary-btn,
+    .secondary-btn,
+    .ghost-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 43px;
+      border-radius: 13px;
+      cursor: pointer;
+      padding: 10px 16px;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .primary-btn {
+      border: 1px solid var(--pink-strong);
+      background: var(--pink-strong);
+      color: white;
+      box-shadow: 0 8px 18px rgba(185, 54, 101, 0.22);
+    }
+
+    .primary-btn:hover {
+      background: var(--pink-strong);
+      border-color: var(--pink-strong);
+      transform: translateY(-1px);
+    }
+
+    .secondary-btn {
+      border: 1px solid #efbfd0;
+      background: white;
+      color: var(--pink-strong);
+    }
+
+    .secondary-btn:hover,
+    .ghost-btn:hover {
+      background: var(--pink-soft);
+    }
+
+    .ghost-btn {
+      border: 1px solid var(--line);
+      background: transparent;
+      color: var(--ink);
+    }
+
+    .mascot-card {
+      position: relative;
+      z-index: 1;
+      min-height: 230px;
+      display: grid;
+      place-items: center;
+      border: 1px dashed #e9b2c7;
+      border-radius: 26px;
+      background: rgba(255, 255, 255, 0.76);
+      text-align: center;
+    }
+
+    .mascot-face {
+      position: relative;
+      width: 132px;
+      height: 112px;
+      border: 3px solid var(--ink);
+      border-radius: 47% 47% 42% 42%;
+      background: white;
+      box-shadow: 0 12px 0 rgba(217, 79, 125, 0.10);
+    }
+
+    .mascot-face::before,
+    .mascot-face::after {
+      content: "";
+      position: absolute;
+      top: -21px;
+      width: 41px;
+      height: 46px;
+      border: 3px solid var(--ink);
+      background: white;
+      transform: rotate(28deg);
+      z-index: -1;
+    }
+
+    .mascot-face::before {
+      left: 8px;
+      border-radius: 80% 10% 25% 15%;
+    }
+
+    .mascot-face::after {
+      right: 8px;
+      border-radius: 10% 80% 15% 25%;
+      transform: rotate(-28deg);
+    }
+
+    .mascot-eyes {
+      position: absolute;
+      left: 50%;
+      top: 46px;
+      width: 64px;
+      transform: translateX(-50%);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .mascot-eyes span {
+      width: 8px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--ink);
+    }
+
+    .mascot-mouth {
+      position: absolute;
+      left: 50%;
+      top: 65px;
+      width: 25px;
+      height: 14px;
+      transform: translateX(-50%);
+      border-bottom: 3px solid var(--ink);
+      border-radius: 0 0 50% 50%;
+    }
+
+    .mascot-cheek {
+      position: absolute;
+      top: 66px;
+      width: 18px;
+      height: 8px;
+      border-radius: 999px;
+      background: #f4b4ca;
+    }
+
+    .mascot-cheek.left {
+      left: 18px;
+    }
+
+    .mascot-cheek.right {
+      right: 18px;
+    }
+
+    .mascot-note {
+      margin: 18px 12px 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .stats-row,
+    .home-grid,
+    .path-grid {
+      display: grid;
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    .stats-row {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .stat-card,
+    .soft-card,
+    .path-card,
+    .filter-panel,
+    .path-detail,
+    .search-spotlight {
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .stat-card {
+      padding: 18px;
+      border-radius: 18px;
+    }
+
+    .stat-number {
+      display: block;
+      color: var(--pink-strong);
+      font-size: 1.7rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .stat-label {
+      display: block;
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .home-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      margin-top: 28px;
+    }
+
+    .soft-card {
+      padding: 22px;
+      border-radius: 22px;
+    }
+
+    .mini-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .mini-item {
+      display: grid;
+      grid-template-columns: 44px 1fr auto;
+      gap: 12px;
+      align-items: center;
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--surface-2);
+      color: var(--ink);
+      cursor: pointer;
+      padding: 10px;
+      text-align: left;
+    }
+
+    .mini-item:hover {
+      border-color: #eab4c8;
+      background: var(--pink-soft);
+    }
+
+    .mini-icon {
+      display: grid;
+      width: 44px;
+      height: 44px;
+      place-items: center;
+      border-radius: 12px;
+      background: white;
+      font-size: 1.35rem;
+    }
+
+    .mini-item small {
+      display: block;
+      color: var(--muted);
+    }
+
+    .path-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .path-card {
+      position: relative;
+      overflow: hidden;
+      min-height: 250px;
+      border-radius: 24px;
+      cursor: pointer;
+      padding: 24px;
+      text-align: left;
+    }
+
+    .path-card:hover {
+      transform: translateY(-3px);
+      border-color: #e8adc3;
+      box-shadow: var(--shadow);
+    }
+
+    .path-card::after {
+      content: attr(data-emoji);
+      position: absolute;
+      right: 16px;
+      bottom: -12px;
+      font-size: 84px;
+      opacity: 0.13;
+      transform: rotate(-7deg);
+    }
+
+    .path-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      border-radius: 999px;
+      background: var(--pink-soft);
+      color: var(--pink-strong);
+      padding: 6px 10px;
+      font-size: 0.78rem;
+      font-weight: 800;
+    }
+
+    .path-card h3 {
+      margin-top: 22px;
+      font-size: 1.42rem;
+    }
+
+    .path-card p {
+      color: var(--muted);
+    }
+
+    .progress-track {
+      height: 10px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #f1e6ea;
+    }
+
+    .progress-fill {
+      width: 0;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--pink);
+      transition: width 220ms ease;
+    }
+
+    .path-card .progress-track {
+      margin-top: 20px;
+    }
+
+    .path-card .progress-label {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .path-detail {
+      border-radius: 26px;
+      padding: clamp(19px, 4vw, 30px);
+    }
+
+    .path-detail-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
+
+    .path-steps {
+      display: grid;
+      gap: 12px;
+    }
+
+    .path-step {
+      display: grid;
+      grid-template-columns: auto 46px minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--surface-2);
+      padding: 13px;
+    }
+
+    .path-step.completed {
+      background: #fbf5f8;
+    }
+
+    .path-step input {
+      width: 19px;
+      height: 19px;
+      accent-color: var(--pink);
+    }
+
+    .step-number {
+      display: grid;
+      width: 36px;
+      height: 36px;
+      place-items: center;
+      border-radius: 12px;
+      background: white;
+      color: var(--pink-strong);
+      font-weight: 900;
+      box-shadow: 0 3px 10px rgba(89, 55, 69, 0.07);
+    }
+
+    .path-step strong {
+      display: block;
+    }
+
+    .path-step small {
+      color: var(--muted);
+    }
+
+    .step-open {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: white;
+      color: var(--pink-strong);
+      cursor: pointer;
+      padding: 8px 10px;
+      font-weight: 800;
+    }
+
+    .filter-panel {
+      position: sticky;
+      top: 145px;
+      z-index: 10;
+      display: grid;
+      grid-template-columns: minmax(180px, 1.2fr) minmax(140px, 0.7fr) minmax(130px, 0.65fr) auto minmax(130px, 0.65fr);
+      gap: 10px;
+      align-items: end;
+      margin-bottom: 16px;
+      border-radius: 19px;
+      padding: 12px;
+    }
+
+    .control-group {
+      min-width: 0;
+    }
+
+    .control-group label {
+      display: block;
+      margin: 0 0 5px 2px;
+      color: var(--muted);
+      font-size: 0.74rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .control-group input,
+    .control-group select {
+      width: 100%;
+      height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: white;
+      color: var(--ink);
+      padding: 0 12px;
+    }
+
+    .view-toggle {
+      display: inline-grid;
+      grid-template-columns: repeat(2, 42px);
+      gap: 4px;
+      padding: 3px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: var(--surface-2);
+    }
+
+    .view-toggle button {
+      width: 42px;
+      height: 36px;
+      border: 0;
+      border-radius: 9px;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .view-toggle button[aria-pressed="true"] {
+      background: white;
+      color: var(--pink-strong);
+      box-shadow: 0 3px 9px rgba(89, 55, 69, 0.09);
+    }
+
+    .active-filters {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      min-height: 36px;
+      margin: 8px 0 16px;
+    }
+
+    .filter-chip,
+    .tag-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      max-width: 100%;
+      border: 1px solid #efbfd0;
+      border-radius: 999px;
+      background: var(--pink-soft);
+      color: #6f2945;
+      padding: 5px 9px;
+      font-size: 0.76rem;
+      font-weight: 800;
+    }
+
+    button.tag-pill,
+    button.filter-chip {
+      cursor: pointer;
+    }
+
+    button.tag-pill:hover,
+    button.filter-chip:hover {
+      background: #ffe2ec;
+    }
+
+    .result-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: center;
+      margin-bottom: 14px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .item-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .item-card {
+      min-width: 0;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 21px;
+      background: white;
+      box-shadow: var(--shadow-soft);
+      transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+    }
+
+    .item-card:hover {
+      transform: translateY(-3px);
+      border-color: #e9b1c5;
+      box-shadow: var(--shadow);
+    }
+
+    .cover-button,
+    .item-text-button {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      color: inherit;
+      cursor: pointer;
+      padding: 0;
+      text-align: left;
+    }
+
+    .cover-button {
+      display: block;
+    }
+
+    .item-text-button:hover .item-title {
+      color: var(--pink-strong);
+    }
+
+    .cover {
+      position: relative;
+      display: grid;
+      min-height: 168px;
+      place-items: center;
+      overflow: hidden;
+      border-bottom: 1px solid var(--line);
+      background:
+        linear-gradient(145deg, #fff9fb, #fce3ec);
+    }
+
+    .cover::before,
+    .cover::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.64);
+    }
+
+    .cover::before {
+      width: 100px;
+      height: 100px;
+      top: -18px;
+      right: -20px;
+    }
+
+    .cover::after {
+      width: 58px;
+      height: 58px;
+      bottom: 10px;
+      left: 10px;
+    }
+
+    .cover-emoji {
+      position: relative;
+      z-index: 1;
+      font-size: 3.4rem;
+      filter: drop-shadow(0 8px 8px rgba(89, 55, 69, 0.12));
+    }
+
+    .cover-type {
+      position: absolute;
+      left: 10px;
+      top: 10px;
+      z-index: 2;
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.88);
+      color: var(--ink);
+      padding: 5px 8px;
+      font-size: 0.68rem;
+      font-weight: 800;
+      backdrop-filter: blur(8px);
+    }
+
+    .audio-badge {
+      position: absolute;
+      right: 10px;
+      bottom: 10px;
+      z-index: 2;
+      border-radius: 999px;
+      background: var(--pink);
+      color: white;
+      padding: 5px 8px;
+      font-size: 0.68rem;
+      font-weight: 800;
+    }
+
+    .item-body {
+      padding: 15px;
+    }
+
+    .item-tags {
+      margin-top: 12px;
+    }
+
+    .item-title {
+      min-height: 2.4em;
+      margin-bottom: 6px;
+      font-size: 1rem;
+    }
+
+    .item-description {
+      display: -webkit-box;
+      overflow: hidden;
+      min-height: 3.1em;
+      margin-bottom: 12px;
+      color: var(--muted);
+      font-size: 0.86rem;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .item-grid.list-view {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .item-grid.list-view .item-card {
+      display: grid;
+      grid-template-columns: 140px minmax(0, 1fr);
+    }
+
+    .item-grid.list-view .cover-button {
+      grid-column: 1;
+      grid-row: 1;
+      height: 100%;
+    }
+
+    .item-grid.list-view .cover {
+      min-height: 144px;
+      height: 100%;
+      border-right: 1px solid var(--line);
+      border-bottom: 0;
+    }
+
+    .item-grid.list-view .item-body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-width: 0;
+      padding: 17px 20px;
+      grid-column: 2;
+      grid-row: 1;
+    }
+
+    .item-grid.list-view .item-title,
+    .item-grid.list-view .item-description {
+      min-height: auto;
+    }
+
+    .empty-state {
+      grid-column: 1 / -1;
+      padding: 46px 18px;
+      border: 1px dashed #e5b3c5;
+      border-radius: 24px;
+      background: rgba(255,255,255,0.7);
+      text-align: center;
+    }
+
+    .empty-state .emoji {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 3rem;
+    }
+
+    .search-spotlight {
+      padding: clamp(20px, 4vw, 34px);
+      border-radius: 26px;
+      background: linear-gradient(135deg, white, #fff4f8);
+    }
+
+    .search-spotlight form {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .search-spotlight input {
+      min-width: 0;
+      height: 50px;
+      border: 1px solid #e8b5c8;
+      border-radius: 15px;
+      background: white;
+      color: var(--ink);
+      padding: 0 16px;
+    }
+
+    .search-results {
+      margin-top: 22px;
+    }
+
+    dialog {
+      width: min(860px, calc(100% - 24px));
+      max-height: min(88vh, 840px);
+      overflow: auto;
+      border: 0;
+      border-radius: 27px;
+      background: white;
+      color: var(--ink);
+      padding: 0;
+      box-shadow: 0 24px 90px rgba(49, 33, 40, 0.30);
+    }
+
+    dialog::backdrop {
+      background: rgba(46, 36, 41, 0.55);
+      backdrop-filter: blur(4px);
+    }
+
+    .modal-shell {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(210px, 0.72fr) minmax(0, 1.28fr);
+      gap: 0;
+    }
+
+    .modal-cover {
+      min-height: 520px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(145deg, #fff7fa, #f9dce7);
+      border-right: 1px solid var(--line);
+      font-size: 6rem;
+    }
+
+    .modal-content {
+      padding: clamp(23px, 4vw, 38px);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      z-index: 2;
+      width: 40px;
+      height: 40px;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      background: white;
+      color: var(--ink);
+      cursor: pointer;
+      font-size: 1.2rem;
+    }
+
+    .modal-meta {
+      color: var(--pink-strong);
+      font-size: 0.8rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .modal-content h2 {
+      margin-top: 7px;
+    }
+
+    .modal-description {
+      color: var(--muted);
+    }
+
+    .modal-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 22px 0;
+    }
+
+    .audio-section {
+      margin-top: 24px;
+      padding-top: 22px;
+      border-top: 1px solid var(--line);
+    }
+
+    .audio-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .audio-track {
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: var(--surface-2);
+      padding: 12px;
+    }
+
+    .audio-track strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+    }
+
+    audio {
+      width: 100%;
+      height: 38px;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      z-index: 100;
+      transform: translate(-50%, 150%);
+      max-width: calc(100% - 28px);
+      border: 1px solid #e9b5c8;
+      border-radius: 999px;
+      background: white;
+      color: var(--ink);
+      box-shadow: var(--shadow);
+      padding: 10px 16px;
+      opacity: 0;
+      transition: transform 180ms ease, opacity 180ms ease;
+      text-align: center;
+    }
+
+    .toast.show {
+      transform: translate(-50%, 0);
+      opacity: 1;
+    }
+
+    .footer-note {
+      margin-top: 34px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      text-align: center;
+    }
+
+
+    :root[data-theme="dark"] body {
+      background:
+        radial-gradient(circle at 9% 4%, rgba(255, 120, 165, 0.10), transparent 24rem),
+        radial-gradient(circle at 94% 22%, rgba(255, 120, 165, 0.08), transparent 22rem),
+        var(--pink-pale);
+    }
+
+    :root[data-theme="dark"] .site-header {
+      border-bottom-color: rgba(73, 56, 66, 0.94);
+      background: rgba(23, 19, 23, 0.92);
+    }
+
+    :root[data-theme="dark"] .brand-mark,
+    :root[data-theme="dark"] .global-search input,
+    :root[data-theme="dark"] .tab-button[aria-selected="true"],
+    :root[data-theme="dark"] .secondary-btn,
+    :root[data-theme="dark"] .mini-icon,
+    :root[data-theme="dark"] .step-number,
+    :root[data-theme="dark"] .step-open,
+    :root[data-theme="dark"] .view-toggle button[aria-pressed="true"],
+    :root[data-theme="dark"] .cover-type,
+    :root[data-theme="dark"] .modal-close,
+    :root[data-theme="dark"] .toast {
+      background: var(--surface);
+      color: var(--ink);
+    }
+
+    :root[data-theme="dark"] .global-search input::placeholder,
+    :root[data-theme="dark"] input::placeholder {
+      color: #9f8f97;
+    }
+
+    :root[data-theme="dark"] .tabs {
+      background: rgba(33, 27, 32, 0.82);
+    }
+
+    :root[data-theme="dark"] .hero {
+      background: linear-gradient(135deg, #241c22, #31222b 72%);
+    }
+
+    :root[data-theme="dark"] .mascot-card,
+    :root[data-theme="dark"] .stat-card,
+    :root[data-theme="dark"] .soft-card,
+    :root[data-theme="dark"] .path-card,
+    :root[data-theme="dark"] .filter-panel,
+    :root[data-theme="dark"] .path-detail,
+    :root[data-theme="dark"] .search-spotlight {
+      background: rgba(33, 27, 32, 0.94);
+    }
+
+    :root[data-theme="dark"] .mascot-face,
+    :root[data-theme="dark"] .mascot-face::before,
+    :root[data-theme="dark"] .mascot-face::after {
+      background: #f9edf2;
+      border-color: #332b30;
+    }
+
+    :root[data-theme="dark"] .mascot-eyes span {
+      background: #332b30;
+    }
+
+    :root[data-theme="dark"] .mascot-mouth {
+      border-bottom-color: #332b30;
+    }
+
+    :root[data-theme="dark"] .mini-item,
+    :root[data-theme="dark"] .path-step,
+    :root[data-theme="dark"] .view-toggle,
+    :root[data-theme="dark"] .audio-track {
+      background: var(--surface-2);
+    }
+
+    :root[data-theme="dark"] .path-step.completed {
+      background: #32232c;
+    }
+
+    :root[data-theme="dark"] .control-group input,
+    :root[data-theme="dark"] .control-group select,
+    :root[data-theme="dark"] .search-spotlight input {
+      background: var(--surface-2);
+      color: var(--ink);
+    }
+
+    :root[data-theme="dark"] .filter-chip,
+    :root[data-theme="dark"] .tag-pill {
+      border-color: #75485d;
+      background: var(--pink-soft);
+      color: #ffd8e6;
+    }
+
+    :root[data-theme="dark"] button.tag-pill:hover,
+    :root[data-theme="dark"] button.filter-chip:hover {
+      background: #4b2c3b;
+    }
+
+    :root[data-theme="dark"] .item-card,
+    :root[data-theme="dark"] dialog {
+      background: var(--surface);
+      color: var(--ink);
+    }
+
+    :root[data-theme="dark"] .cover {
+      background: linear-gradient(145deg, #30242b, #4a2938);
+    }
+
+    :root[data-theme="dark"] .cover::before,
+    :root[data-theme="dark"] .cover::after {
+      background: rgba(255, 255, 255, 0.07);
+    }
+
+    :root[data-theme="dark"] .modal-cover {
+      background: linear-gradient(145deg, #2d2229, #4a2938);
+    }
+
+    :root[data-theme="dark"] .empty-state {
+      border-color: #714458;
+      background: rgba(33, 27, 32, 0.74);
+    }
+
+    :root[data-theme="dark"] audio {
+      filter: invert(0.86) hue-rotate(180deg);
+    }
+
+    @media (max-width: 960px) {
+      .stats-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .path-grid,
+      .item-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .filter-panel {
+        top: 145px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .view-toggle {
+        justify-self: start;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .header-inner,
+      main {
+        width: min(100% - 20px, 1180px);
+      }
+
+      .header-top {
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 10px;
+      }
+
+      .brand {
+        width: fit-content;
+      }
+
+      .global-search {
+        grid-column: 1 / -1;
+        grid-row: 2;
+      }
+
+      .theme-toggle {
+        grid-column: 2;
+        grid-row: 1;
+      }
+
+      .tabs {
+        margin-top: 10px;
+      }
+
+      main {
+        padding-top: 20px;
+      }
+
+      .hero,
+      .home-grid,
+      .path-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .mascot-card {
+        min-height: 200px;
+      }
+
+      .section-heading,
+      .path-detail-top,
+      .result-meta {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .filter-panel {
+        position: static;
+        grid-template-columns: 1fr;
+      }
+
+      .item-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .item-grid.list-view .item-card {
+        grid-template-columns: 104px minmax(0, 1fr);
+      }
+
+      .item-grid.list-view .cover {
+        min-height: 165px;
+      }
+
+      .item-grid.list-view .cover-emoji {
+        font-size: 2.5rem;
+      }
+
+      .path-step {
+        grid-template-columns: auto 40px minmax(0, 1fr);
+      }
+
+      .step-open {
+        grid-column: 2 / -1;
+        justify-self: start;
+      }
+
+      .modal-shell {
+        grid-template-columns: 1fr;
+      }
+
+      .modal-cover {
+        min-height: 220px;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .modal-close {
+        position: fixed;
+        top: max(18px, env(safe-area-inset-top));
+        right: 18px;
+      }
+    }
+
+    @media (max-width: 430px) {
+      .brand-copy span {
+        display: none;
+      }
+
+      .tabs {
+        gap: 3px;
+        padding: 4px;
+      }
+
+      .tab-button {
+        padding: 8px 4px;
+        font-size: 0.86rem;
+      }
+
+      .stats-row {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .stat-card {
+        padding: 14px;
+      }
+
+      .hero-actions,
+      .modal-actions {
+        flex-direction: column;
+      }
+
+      .hero-actions button,
+      .modal-actions button {
+        width: 100%;
+      }
+
+      .search-spotlight form {
+        grid-template-columns: 1fr;
+      }
+
+      .item-grid.list-view .item-card {
+        grid-template-columns: 1fr;
+      }
+
+      .item-grid.list-view .cover-button {
+        grid-column: 1;
+        grid-row: 1;
+      }
+
+      .item-grid.list-view .item-body {
+        grid-column: 1;
+        grid-row: 2;
+      }
+
+      .item-grid.list-view .cover {
+        min-height: 135px;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#mainContent">Skip to content</a>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-top">
+        <button class="brand" type="button" data-tab-target="home" aria-label="Go to Home">
+          <span class="brand-mark" aria-hidden="true">🌸</span>
+          <span class="brand-copy">
+            <strong>Sakura Study</strong>
+            <span>Your cozy English library</span>
+          </span>
+        </button>
+
+        <form class="global-search" id="globalSearchForm" role="search">
+          <span class="global-search-icon" aria-hidden="true">⌕</span>
+          <label class="sr-only" for="globalSearchInput">Search the study library</label>
+          <input id="globalSearchInput" type="search" autocomplete="off"
+            placeholder="Search books, lessons, audio, tags..." aria-label="Search the library from anywhere" />
+          <button type="submit" aria-label="Show search results">→</button>
+        </form>
+
+        <button class="theme-toggle" id="themeToggle" type="button"
+          aria-pressed="false" aria-label="Switch to dark mode" title="Switch to dark mode">
+          <span id="themeIcon" aria-hidden="true">🌙</span>
+        </button>
+      </div>
+
+      <nav class="tabs" role="tablist" aria-label="Primary navigation">
+        <button class="tab-button" type="button" role="tab" aria-selected="true" aria-controls="panel-home" id="tab-home" data-tab="home">Home</button>
+        <button class="tab-button" type="button" role="tab" aria-selected="false" aria-controls="panel-paths" id="tab-paths" data-tab="paths">Paths</button>
+        <button class="tab-button" type="button" role="tab" aria-selected="false" aria-controls="panel-library" id="tab-library" data-tab="library">Library</button>
+        <button class="tab-button" type="button" role="tab" aria-selected="false" aria-controls="panel-search" id="tab-search" data-tab="search">Search</button>
+      </nav>
+    </div>
+  </header>
+
+  <main id="mainContent">
+    <section class="panel" id="panel-home" role="tabpanel" aria-labelledby="tab-home">
+      <div class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Tiny steps, real progress</p>
+          <h1>Study English in your own cozy corner.</h1>
+          <p>
+            Keep books, listening tracks, exam papers, vocabulary, and grammar resources together.
+            Follow a path when you want structure, or browse freely when curiosity wins.
+          </p>
+          <div class="hero-actions">
+            <button class="primary-btn" type="button" data-tab-target="library">Browse the library</button>
+            <button class="secondary-btn" type="button" data-tab-target="paths">Choose a study path</button>
+          </div>
+        </div>
+
+        <div class="mascot-card" aria-label="Momo the study cat mascot">
+          <div>
+            <div class="mascot-face" aria-hidden="true">
+              <div class="mascot-eyes"><span></span><span></span></div>
+              <div class="mascot-mouth"></div>
+              <span class="mascot-cheek left"></span>
+              <span class="mascot-cheek right"></span>
+            </div>
+            <p class="mascot-note"><strong>Momo says:</strong><br />“One page is still progress!”</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="stats-row" aria-label="Library overview">
+        <div class="stat-card"><span class="stat-number" id="homeItemCount">16</span><span class="stat-label">study resources</span></div>
+        <div class="stat-card"><span class="stat-number">3</span><span class="stat-label">learning paths</span></div>
+        <div class="stat-card"><span class="stat-number" id="homeAudioCount">3</span><span class="stat-label">audio collections</span></div>
+        <div class="stat-card"><span class="stat-number" id="homeProgressCount">0</span><span class="stat-label">steps complete</span></div>
+      </div>
+
+      <div class="home-grid">
+        <article class="soft-card">
+          <p class="eyebrow">Continue studying</p>
+          <h2>Pick up where you left off</h2>
+          <div class="mini-list" id="continueList"></div>
+        </article>
+
+        <article class="soft-card">
+          <p class="eyebrow">Suggested today</p>
+          <h2>A gentle 45-minute session</h2>
+          <div class="mini-list">
+            <button class="mini-item" type="button" data-item-id="basic-grammar">
+              <span class="mini-icon" aria-hidden="true">🧩</span>
+              <span><strong>Review grammar</strong><small>15 min · sentence building</small></span>
+              <span aria-hidden="true">›</span>
+            </button>
+            <button class="mini-item" type="button" data-item-id="daily-vocab">
+              <span class="mini-icon" aria-hidden="true">🌱</span>
+              <span><strong>Learn 15 words</strong><small>15 min · everyday vocabulary</small></span>
+              <span aria-hidden="true">›</span>
+            </button>
+            <button class="mini-item" type="button" data-item-id="coffee-listening">
+              <span class="mini-icon" aria-hidden="true">🎧</span>
+              <span><strong>Listen and shadow</strong><small>15 min · café conversation</small></span>
+              <span aria-hidden="true">›</span>
+            </button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-paths" role="tabpanel" aria-labelledby="tab-paths" hidden>
+      <div id="pathsOverview">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Guided routes</p>
+            <h2>Choose a learning path</h2>
+            <p class="muted">Each path mixes lessons, practice, and library resources in a clear order.</p>
+          </div>
+        </div>
+        <div class="path-grid" id="pathGrid"></div>
+      </div>
+
+      <div id="pathDetailHost" hidden></div>
+    </section>
+
+    <section class="panel" id="panel-library" role="tabpanel" aria-labelledby="tab-library" hidden>
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Everything in one place</p>
+          <h2>Your library</h2>
+          <p class="muted">Browse, filter, sort, and open any resource.</p>
+        </div>
+      </div>
+
+      <div class="filter-panel" aria-label="Library filters">
+        <div class="control-group">
+          <label for="librarySearch">Search</label>
+          <input id="librarySearch" type="search" placeholder="Title, description, or tag" autocomplete="off" />
+        </div>
+
+        <div class="control-group">
+          <label for="typeFilter">Type</label>
+          <select id="typeFilter"><option value="">All types</option></select>
+        </div>
+
+        <div class="control-group">
+          <label for="tagFilter">Tag</label>
+          <select id="tagFilter"><option value="">All tags</option></select>
+        </div>
+
+        <div class="view-toggle" aria-label="Choose library view">
+          <button type="button" id="gridViewBtn" aria-pressed="true" title="Grid view" aria-label="Grid view">▦</button>
+          <button type="button" id="listViewBtn" aria-pressed="false" title="List view" aria-label="List view">☷</button>
+        </div>
+
+        <div class="control-group">
+          <label for="sortControl">Sort</label>
+          <select id="sortControl">
+            <option value="featured">Featured</option>
+            <option value="title-asc">Title A–Z</option>
+            <option value="title-desc">Title Z–A</option>
+            <option value="type">Type</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="active-filters" id="activeFilters" aria-live="polite"></div>
+      <div class="result-meta">
+        <span id="libraryResultCount"></span>
+        <button class="ghost-btn" id="clearFiltersBtn" type="button">Clear filters</button>
+      </div>
+      <div class="item-grid" id="libraryGrid"></div>
+    </section>
+
+    <section class="panel" id="panel-search" role="tabpanel" aria-labelledby="tab-search" hidden>
+      <div class="search-spotlight">
+        <p class="eyebrow">Find anything</p>
+        <h2>Search your whole study shelf</h2>
+        <p class="muted">Try “TOEFL listening,” “grammar,” or “audio included.”</p>
+        <form id="searchPageForm" role="search">
+          <input id="searchPageInput" type="search" placeholder="What are you studying today?" autocomplete="off" aria-label="Search all study resources" />
+          <button class="primary-btn" type="submit">Search</button>
+        </form>
+      </div>
+      <div class="search-results">
+        <div class="result-meta">
+          <span id="searchResultCount">Type something above to search.</span>
+        </div>
+        <div class="item-grid" id="searchGrid"></div>
+      </div>
+    </section>
+
+    <p class="footer-note">Offline clickable prototype · All content is placeholder data · No external requests</p>
+  </main>
+
+  <dialog id="itemDialog" aria-labelledby="modalTitle">
+    <div id="modalContent"></div>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const items = [
+      {
+        id: "basic-picture",
+        title: "Everyday English Picture Dictionary",
+        type: "Book (PDF)",
+        tags: ["basic", "vocabulary", "reading"],
+        description: "A beginner-friendly visual dictionary covering home, school, food, travel, and daily routines.",
+        emoji: "📘",
+        featured: 1,
+        action: "Open PDF"
+      },
+      {
+        id: "basic-grammar",
+        title: "Basic Grammar Building Blocks",
+        type: "Grammar cheat sheet",
+        tags: ["basic", "grammar", "writing"],
+        description: "A compact reference for be, have, do, sentence order, plurals, and common question patterns.",
+        emoji: "🧩",
+        featured: 2,
+        action: "Read cheat sheet"
+      },
+      {
+        id: "coffee-listening",
+        title: "English at the Coffee Shop",
+        type: "Listening book",
+        tags: ["basic", "listening", "speaking", "audio-included"],
+        description: "Short illustrated dialogues with slow and natural-speed companion audio for shadowing practice.",
+        emoji: "☕",
+        featured: 3,
+        action: "Open book",
+        audio: [
+          { title: "Track 1 · Ordering a drink", frequency: 392 },
+          { title: "Track 2 · Asking for a seat", frequency: 440 },
+          { title: "Track 3 · Friendly small talk", frequency: 494 }
+        ]
+      },
+      {
+        id: "daily-vocab",
+        title: "15 Words a Day Flashcards",
+        type: "Vocabulary list / flashcards",
+        tags: ["basic", "vocabulary", "speaking"],
+        description: "A reusable daily deck with meaning, pronunciation notes, and one practical example sentence per word.",
+        emoji: "🌱",
+        featured: 4,
+        action: "Study flashcards"
+      },
+      {
+        id: "sentence-workshop",
+        title: "Sentence Workshop: Present and Past",
+        type: "Worksheet",
+        tags: ["basic", "grammar", "writing"],
+        description: "Short exercises for affirmative, negative, and question forms, plus a friendly answer guide.",
+        emoji: "✏️",
+        featured: 5,
+        action: "Open worksheet"
+      },
+      {
+        id: "toefl-guide",
+        title: "TOEFL Reading Strategy Notebook",
+        type: "Book (PDF)",
+        tags: ["toefl", "reading", "vocabulary"],
+        description: "A structured notebook for question types, passage mapping, evidence checks, and timing habits.",
+        emoji: "📗",
+        featured: 6,
+        action: "Open PDF"
+      },
+      {
+        id: "toefl-paper-1",
+        title: "TOEFL Practice Test 01",
+        type: "Practice test / past paper",
+        tags: ["toefl", "reading", "listening", "writing", "speaking"],
+        description: "A full four-skill mock test with realistic timing and a separate answer key.",
+        emoji: "📝",
+        featured: 7,
+        action: "Start practice test"
+      },
+      {
+        id: "toefl-paper-2",
+        title: "TOEFL Practice Test 02: Campus Life",
+        type: "Practice test / past paper",
+        tags: ["toefl", "listening", "speaking"],
+        description: "A second exam-style set focused on campus conversations, mini lectures, and integrated speaking.",
+        emoji: "🏫",
+        featured: 8,
+        action: "Start practice test"
+      },
+      {
+        id: "toefl-audio",
+        title: "TOEFL Mini-Lectures Audio Pack",
+        type: "Audio track",
+        tags: ["toefl", "listening", "audio-included"],
+        description: "Three short academic listening samples for note-taking and main-idea practice.",
+        emoji: "🎧",
+        featured: 9,
+        action: "Play audio",
+        audio: [
+          { title: "Track 1 · Urban ecology", frequency: 330 },
+          { title: "Track 2 · Memory and sleep", frequency: 370 },
+          { title: "Track 3 · Early trade routes", frequency: 415 }
+        ]
+      },
+      {
+        id: "toefl-answers",
+        title: "TOEFL Practice Tests 01–02 Answer Key",
+        type: "Answer key",
+        tags: ["toefl", "reading", "listening"],
+        description: "Answers, short explanations, scoring notes, and reflection prompts for both TOEFL practice sets.",
+        emoji: "✅",
+        featured: 10,
+        action: "Open answer key"
+      },
+      {
+        id: "ielts-listening",
+        title: "IELTS Listening: Everyday to Academic",
+        type: "Listening book",
+        tags: ["ielts", "listening", "audio-included"],
+        description: "A four-section listening workbook with form completion, maps, conversations, and short lectures.",
+        emoji: "🎙️",
+        featured: 11,
+        action: "Open book",
+        audio: [
+          { title: "Section 1 · Booking a room", frequency: 349 },
+          { title: "Section 2 · Museum tour", frequency: 392 },
+          { title: "Section 3 · Group project", frequency: 440 },
+          { title: "Section 4 · Climate adaptation", frequency: 466 }
+        ]
+      },
+      {
+        id: "ielts-paper-1",
+        title: "IELTS Academic Practice Paper A",
+        type: "Practice test / past paper",
+        tags: ["ielts", "reading", "writing", "listening"],
+        description: "A full academic practice paper with timed reading, listening tasks, and both writing sections.",
+        emoji: "📄",
+        featured: 12,
+        action: "Start practice paper"
+      },
+      {
+        id: "ielts-paper-2",
+        title: "IELTS Academic Practice Paper B",
+        type: "Practice test / past paper",
+        tags: ["ielts", "reading", "writing", "speaking"],
+        description: "A second paper with data-description writing, a discussion essay, and speaking cue cards.",
+        emoji: "📑",
+        featured: 13,
+        action: "Start practice paper"
+      },
+      {
+        id: "writing-article",
+        title: "Why Habits Beat Motivation",
+        type: "Reading article",
+        tags: ["basic", "toefl", "ielts", "reading", "writing"],
+        description: "A medium-length article with margin questions and a short paragraph-writing prompt.",
+        emoji: "📰",
+        featured: 14,
+        action: "Read article"
+      },
+      {
+        id: "pronunciation-video",
+        title: "Clear Final Sounds in English",
+        type: "Video lesson",
+        tags: ["basic", "speaking", "listening"],
+        description: "A placeholder video lesson on final consonants, voiced endings, and simple shadowing drills.",
+        emoji: "📺",
+        featured: 15,
+        action: "Watch lesson"
+      },
+      {
+        id: "dictionary-link",
+        title: "Learner Dictionary & Pronunciation Tools",
+        type: "External link",
+        tags: ["basic", "toefl", "ielts", "vocabulary", "speaking"],
+        description: "A saved resource link for definitions, usage examples, and pronunciation practice.",
+        emoji: "🔗",
+        featured: 16,
+        action: "Visit resource"
+      }
+    ];
+
+    const paths = [
+      {
+        id: "basic",
+        title: "Basic English",
+        emoji: "🌱",
+        badge: "Start here",
+        description: "Build everyday vocabulary, sentence confidence, listening habits, and clear pronunciation.",
+        steps: [
+          { title: "Learn 15 everyday words", note: "Flashcards · 15 minutes", itemId: "daily-vocab" },
+          { title: "Review sentence building blocks", note: "Grammar · 20 minutes", itemId: "basic-grammar" },
+          { title: "Practice present and past forms", note: "Worksheet · 25 minutes", itemId: "sentence-workshop" },
+          { title: "Listen at slow speed", note: "Coffee Shop · Track 1", itemId: "coffee-listening" },
+          { title: "Shadow the natural-speed dialogue", note: "Coffee Shop · Track 2", itemId: "coffee-listening" },
+          { title: "Read one short article", note: "Reading · 20 minutes", itemId: "writing-article" }
+        ]
+      },
+      {
+        id: "toefl",
+        title: "TOEFL",
+        emoji: "🎓",
+        badge: "Four skills",
+        description: "Develop academic reading, lecture listening, integrated writing, and timed speaking.",
+        steps: [
+          { title: "Review reading question types", note: "Strategy notebook", itemId: "toefl-guide" },
+          { title: "Map one academic passage", note: "Reading · 25 minutes", itemId: "toefl-guide" },
+          { title: "Take notes on a mini lecture", note: "Listening · Track 1", itemId: "toefl-audio" },
+          { title: "Complete Practice Test 01", note: "Timed mock", itemId: "toefl-paper-1" },
+          { title: "Review mistakes and explanations", note: "Answer key", itemId: "toefl-answers" },
+          { title: "Complete Practice Test 02", note: "Campus focus", itemId: "toefl-paper-2" }
+        ]
+      },
+      {
+        id: "ielts",
+        title: "IELTS",
+        emoji: "🪷",
+        badge: "Academic",
+        description: "Practice section-based listening, academic reading, task writing, and cue-card speaking.",
+        steps: [
+          { title: "Learn the four listening sections", note: "Listening book", itemId: "ielts-listening" },
+          { title: "Practice form and map completion", note: "Audio · Sections 1–2", itemId: "ielts-listening" },
+          { title: "Complete Practice Paper A", note: "Timed academic paper", itemId: "ielts-paper-1" },
+          { title: "Draft a Task 1 response", note: "Writing · 20 minutes", itemId: "ielts-paper-1" },
+          { title: "Practice two speaking cue cards", note: "Speaking · 15 minutes", itemId: "ielts-paper-2" },
+          { title: "Complete Practice Paper B", note: "Final mock", itemId: "ielts-paper-2" }
+        ]
+      }
+    ];
+
+    const state = {
+      currentTab: "home",
+      libraryQuery: "",
+      type: "",
+      tag: "",
+      sort: "featured",
+      view: "grid",
+      searchQuery: "",
+      activePath: null,
+      completed: loadProgress()
+    };
+
+    const refs = {
+      tabs: [...document.querySelectorAll(".tab-button")],
+      panels: [...document.querySelectorAll(".panel")],
+      pathGrid: document.getElementById("pathGrid"),
+      pathsOverview: document.getElementById("pathsOverview"),
+      pathDetailHost: document.getElementById("pathDetailHost"),
+      libraryGrid: document.getElementById("libraryGrid"),
+      librarySearch: document.getElementById("librarySearch"),
+      typeFilter: document.getElementById("typeFilter"),
+      tagFilter: document.getElementById("tagFilter"),
+      sortControl: document.getElementById("sortControl"),
+      activeFilters: document.getElementById("activeFilters"),
+      libraryResultCount: document.getElementById("libraryResultCount"),
+      clearFiltersBtn: document.getElementById("clearFiltersBtn"),
+      gridViewBtn: document.getElementById("gridViewBtn"),
+      listViewBtn: document.getElementById("listViewBtn"),
+      globalSearchForm: document.getElementById("globalSearchForm"),
+      globalSearchInput: document.getElementById("globalSearchInput"),
+      searchPageForm: document.getElementById("searchPageForm"),
+      searchPageInput: document.getElementById("searchPageInput"),
+      searchGrid: document.getElementById("searchGrid"),
+      searchResultCount: document.getElementById("searchResultCount"),
+      dialog: document.getElementById("itemDialog"),
+      modalContent: document.getElementById("modalContent"),
+      toast: document.getElementById("toast"),
+      continueList: document.getElementById("continueList"),
+      homeProgressCount: document.getElementById("homeProgressCount"),
+      themeToggle: document.getElementById("themeToggle"),
+      themeIcon: document.getElementById("themeIcon")
+    };
+
+
+    function applyTheme(theme, persist = true) {
+      const nextTheme = theme === "dark" ? "dark" : "light";
+      document.documentElement.dataset.theme = nextTheme;
+
+      const isDark = nextTheme === "dark";
+      refs.themeToggle.setAttribute("aria-pressed", isDark ? "true" : "false");
+      refs.themeToggle.setAttribute("aria-label", isDark ? "Switch to light mode" : "Switch to dark mode");
+      refs.themeToggle.title = isDark ? "Switch to light mode" : "Switch to dark mode";
+      refs.themeIcon.textContent = isDark ? "☀️" : "🌙";
+
+      if (persist) {
+        try {
+          localStorage.setItem("sakura-study-theme", nextTheme);
+        } catch {
+          // Theme still works for this session if storage is unavailable.
+        }
+      }
+    }
+
+    function initializeThemeControl() {
+      const activeTheme = document.documentElement.dataset.theme === "dark" ? "dark" : "light";
+      applyTheme(activeTheme, false);
+    }
+
+    function loadProgress() {
+      try {
+        return JSON.parse(localStorage.getItem("sakura-study-progress")) || {};
+      } catch {
+        return {};
+      }
+    }
+
+    function saveProgress() {
+      localStorage.setItem("sakura-study-progress", JSON.stringify(state.completed));
+    }
+
+    function switchTab(tabName) {
+      state.currentTab = tabName;
+      refs.tabs.forEach((tab) => {
+        const selected = tab.dataset.tab === tabName;
+        tab.setAttribute("aria-selected", selected ? "true" : "false");
+        tab.tabIndex = selected ? 0 : -1;
+      });
+
+      refs.panels.forEach((panel) => {
+        panel.hidden = panel.id !== `panel-${tabName}`;
+      });
+
+      if (tabName === "library") {
+        renderLibrary();
+      }
+      if (tabName === "search") {
+        refs.searchPageInput.value = state.searchQuery;
+        renderSearch();
+      }
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function normalize(value) {
+      return value.toLowerCase().trim();
+    }
+
+    function searchItems(query) {
+      const q = normalize(query);
+      if (!q) return [];
+      return items.filter((item) => {
+        const haystack = [item.title, item.type, item.description, ...item.tags].join(" ").toLowerCase();
+        return haystack.includes(q);
+      });
+    }
+
+    function itemCard(item) {
+      const tagButtons = item.tags.slice(0, 4).map((tag) =>
+        `<button class="tag-pill" type="button" data-filter-tag="${tag}" aria-label="Filter library by ${tag}">${tag}</button>`
+      ).join("");
+
+      return `
+        <article class="item-card">
+          <button class="cover-button" type="button" data-item-id="${item.id}" aria-label="Open ${escapeHtml(item.title)}">
+            <div class="cover">
+              <span class="cover-type">${escapeHtml(item.type)}</span>
+              <span class="cover-emoji" aria-hidden="true">${item.emoji}</span>
+              ${item.audio ? `<span class="audio-badge">♫ audio</span>` : ""}
+            </div>
+          </button>
+          <div class="item-body">
+            <button class="item-text-button" type="button" data-item-id="${item.id}" aria-label="Open ${escapeHtml(item.title)} details">
+              <h3 class="item-title">${escapeHtml(item.title)}</h3>
+              <p class="item-description">${escapeHtml(item.description)}</p>
+            </button>
+            <div class="tags item-tags">${tagButtons}</div>
+          </div>
+        </article>
+      `;
+    }
+
+    function renderLibrary() {
+      let filtered = items.filter((item) => {
+        const q = normalize(state.libraryQuery);
+        const matchesText = !q || [item.title, item.type, item.description, ...item.tags].join(" ").toLowerCase().includes(q);
+        const matchesType = !state.type || item.type === state.type;
+        const matchesTag = !state.tag || item.tags.includes(state.tag);
+        return matchesText && matchesType && matchesTag;
+      });
+
+      filtered = [...filtered].sort((a, b) => {
+        if (state.sort === "title-asc") return a.title.localeCompare(b.title);
+        if (state.sort === "title-desc") return b.title.localeCompare(a.title);
+        if (state.sort === "type") return a.type.localeCompare(b.type) || a.title.localeCompare(b.title);
+        return a.featured - b.featured;
+      });
+
+      refs.libraryGrid.classList.toggle("list-view", state.view === "list");
+      refs.libraryGrid.innerHTML = filtered.length
+        ? filtered.map(itemCard).join("")
+        : emptyState("🌸", "No petals found", "Try removing a filter or searching with a broader word.");
+
+      refs.libraryResultCount.textContent = `${filtered.length} ${filtered.length === 1 ? "item" : "items"} shown`;
+      renderActiveFilters();
+    }
+
+    function renderActiveFilters() {
+      const chips = [];
+      if (state.libraryQuery) chips.push(`<button class="filter-chip" type="button" data-clear-filter="query">Search: “${escapeHtml(state.libraryQuery)}” ×</button>`);
+      if (state.type) chips.push(`<button class="filter-chip" type="button" data-clear-filter="type">Type: ${escapeHtml(state.type)} ×</button>`);
+      if (state.tag) chips.push(`<button class="filter-chip" type="button" data-clear-filter="tag">Tag: ${escapeHtml(state.tag)} ×</button>`);
+      refs.activeFilters.innerHTML = chips.length ? chips.join("") : `<span class="muted">No filters active. Your whole shelf is visible.</span>`;
+    }
+
+    function renderSearch() {
+      const results = searchItems(state.searchQuery);
+      refs.searchGrid.innerHTML = state.searchQuery
+        ? (results.length ? results.map(itemCard).join("") : emptyState("🔎", "Nothing matched", "Momo checked every shelf. Try a shorter or different phrase."))
+        : emptyState("🐾", "Your search starts here", "Search by skill, exam, title, resource type, or tag.");
+
+      refs.searchResultCount.textContent = state.searchQuery
+        ? `${results.length} ${results.length === 1 ? "result" : "results"} for “${state.searchQuery}”`
+        : "Type something above to search.";
+    }
+
+    function renderPaths() {
+      refs.pathGrid.innerHTML = paths.map((path) => {
+        const progress = getPathProgress(path.id);
+        return `
+          <button class="path-card" type="button" data-path-id="${path.id}" data-emoji="${path.emoji}">
+            <span class="path-badge">${path.emoji} ${escapeHtml(path.badge)}</span>
+            <h3>${escapeHtml(path.title)}</h3>
+            <p>${escapeHtml(path.description)}</p>
+            <div class="progress-track" aria-hidden="true">
+              <div class="progress-fill" style="width:${progress.percent}%"></div>
+            </div>
+            <div class="progress-label">
+              <span>${progress.done}/${progress.total} complete</span>
+              <span>${progress.percent}%</span>
+            </div>
+          </button>
+        `;
+      }).join("");
+    }
+
+    function openPath(pathId) {
+      const path = paths.find((entry) => entry.id === pathId);
+      if (!path) return;
+      state.activePath = pathId;
+      refs.pathsOverview.hidden = true;
+      refs.pathDetailHost.hidden = false;
+      renderPathDetail(path);
+    }
+
+    function renderPathDetail(path) {
+      const progress = getPathProgress(path.id);
+      refs.pathDetailHost.innerHTML = `
+        <div class="path-detail">
+          <div class="path-detail-top">
+            <div>
+              <button class="ghost-btn" type="button" id="backToPaths">← All paths</button>
+              <p class="eyebrow" style="margin-top:18px">${path.emoji} ${escapeHtml(path.badge)}</p>
+              <h2>${escapeHtml(path.title)}</h2>
+              <p class="muted">${escapeHtml(path.description)}</p>
+            </div>
+            <div style="min-width:min(220px,100%)">
+              <div class="progress-label" style="display:flex;justify-content:space-between;margin-bottom:8px;color:var(--muted);font-size:.84rem">
+                <span>${progress.done} of ${progress.total} complete</span><strong>${progress.percent}%</strong>
+              </div>
+              <div class="progress-track"><div class="progress-fill" style="width:${progress.percent}%"></div></div>
+            </div>
+          </div>
+          <div class="path-steps">
+            ${path.steps.map((step, index) => {
+              const key = `${path.id}-${index}`;
+              const checked = Boolean(state.completed[key]);
+              return `
+                <div class="path-step ${checked ? "completed" : ""}">
+                  <input id="step-${key}" type="checkbox" data-step-key="${key}" ${checked ? "checked" : ""} aria-label="Mark ${escapeHtml(step.title)} complete" />
+                  <label class="step-number" for="step-${key}">${index + 1}</label>
+                  <label for="step-${key}">
+                    <strong>${escapeHtml(step.title)}</strong>
+                    <small>${escapeHtml(step.note)}</small>
+                  </label>
+                  <button class="step-open" type="button" data-item-id="${step.itemId}">Open</button>
+                </div>
+              `;
+            }).join("")}
+          </div>
+        </div>
+      `;
+
+      document.getElementById("backToPaths").addEventListener("click", closePath);
+    }
+
+    function closePath() {
+      state.activePath = null;
+      refs.pathDetailHost.hidden = true;
+      refs.pathsOverview.hidden = false;
+      renderPaths();
+    }
+
+    function getPathProgress(pathId) {
+      const path = paths.find((entry) => entry.id === pathId);
+      const total = path.steps.length;
+      const done = path.steps.reduce((count, _, index) => count + (state.completed[`${pathId}-${index}`] ? 1 : 0), 0);
+      return { total, done, percent: Math.round((done / total) * 100) };
+    }
+
+    function totalCompleted() {
+      return Object.values(state.completed).filter(Boolean).length;
+    }
+
+    function renderHome() {
+      refs.homeProgressCount.textContent = totalCompleted();
+      const featured = [items[2], items[5], items[10]];
+      refs.continueList.innerHTML = featured.map((item) => `
+        <button class="mini-item" type="button" data-item-id="${item.id}">
+          <span class="mini-icon" aria-hidden="true">${item.emoji}</span>
+          <span><strong>${escapeHtml(item.title)}</strong><small>${escapeHtml(item.type)} · ${item.tags[0]}</small></span>
+          <span aria-hidden="true">›</span>
+        </button>
+      `).join("");
+    }
+
+    function openItem(itemId) {
+      const item = items.find((entry) => entry.id === itemId);
+      if (!item) return;
+
+      const audioSection = item.audio ? `
+        <section class="audio-section">
+          <p class="eyebrow">Companion audio</p>
+          <h3>Tracks included with this resource</h3>
+          <div class="audio-list">
+            ${item.audio.map((track, index) => `
+              <div class="audio-track">
+                <strong>${escapeHtml(track.title)}</strong>
+                <audio controls preload="metadata" data-tone="${track.frequency}" data-duration="${2.2 + index * 0.25}">
+                  Your browser does not support audio playback.
+                </audio>
+              </div>
+            `).join("")}
+          </div>
+        </section>
+      ` : "";
+
+      refs.modalContent.innerHTML = `
+        <div class="modal-shell">
+          <button class="modal-close" id="modalCloseBtn" type="button" aria-label="Close item details">×</button>
+          <div class="modal-cover" aria-hidden="true">${item.emoji}</div>
+          <div class="modal-content">
+            <p class="modal-meta">${escapeHtml(item.type)}</p>
+            <h2 id="modalTitle">${escapeHtml(item.title)}</h2>
+            <div class="tags" style="margin:14px 0 18px">
+              ${item.tags.map((tag) => `<button class="tag-pill" type="button" data-filter-tag="${tag}">${tag}</button>`).join("")}
+            </div>
+            <p class="modal-description">${escapeHtml(item.description)}</p>
+            <div class="modal-actions">
+              <button class="primary-btn" type="button" data-open-placeholder="${escapeHtml(item.action)}">${escapeHtml(item.action)}</button>
+              <button class="secondary-btn" type="button" data-add-favorite>♡ Save to favorites</button>
+            </div>
+            <p class="muted" style="font-size:.84rem">Prototype note: buttons demonstrate navigation and states only. No real file or website is opened.</p>
+            ${audioSection}
+          </div>
+        </div>
+      `;
+
+      if (typeof refs.dialog.showModal === "function") {
+        refs.dialog.showModal();
+      } else {
+        refs.dialog.setAttribute("open", "");
+      }
+
+      document.getElementById("modalCloseBtn").addEventListener("click", () => refs.dialog.close());
+      refs.modalContent.querySelectorAll("audio[data-tone]").forEach((audio) => {
+        const frequency = Number(audio.dataset.tone);
+        const duration = Number(audio.dataset.duration);
+        audio.src = createToneWavUrl(frequency, duration);
+      });
+    }
+
+    function closeDialogOnBackdrop(event) {
+      const rect = refs.dialog.getBoundingClientRect();
+      const outside = event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom;
+      if (outside) refs.dialog.close();
+    }
+
+    function createToneWavUrl(frequency = 440, duration = 2.2) {
+      const sampleRate = 8000;
+      const samples = Math.floor(sampleRate * duration);
+      const buffer = new ArrayBuffer(44 + samples * 2);
+      const view = new DataView(buffer);
+
+      const writeText = (offset, text) => {
+        for (let i = 0; i < text.length; i++) view.setUint8(offset + i, text.charCodeAt(i));
+      };
+
+      writeText(0, "RIFF");
+      view.setUint32(4, 36 + samples * 2, true);
+      writeText(8, "WAVE");
+      writeText(12, "fmt ");
+      view.setUint32(16, 16, true);
+      view.setUint16(20, 1, true);
+      view.setUint16(22, 1, true);
+      view.setUint32(24, sampleRate, true);
+      view.setUint32(28, sampleRate * 2, true);
+      view.setUint16(32, 2, true);
+      view.setUint16(34, 16, true);
+      writeText(36, "data");
+      view.setUint32(40, samples * 2, true);
+
+      for (let i = 0; i < samples; i++) {
+        const fade = Math.min(1, i / 500, (samples - i) / 500);
+        const sample = Math.sin((2 * Math.PI * frequency * i) / sampleRate) * 0.13 * fade;
+        view.setInt16(44 + i * 2, sample * 32767, true);
+      }
+
+      return URL.createObjectURL(new Blob([buffer], { type: "audio/wav" }));
+    }
+
+    function showToast(message) {
+      refs.toast.textContent = message;
+      refs.toast.classList.add("show");
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => refs.toast.classList.remove("show"), 2200);
+    }
+
+    function emptyState(emoji, title, message) {
+      return `
+        <div class="empty-state">
+          <span class="emoji" aria-hidden="true">${emoji}</span>
+          <h3>${escapeHtml(title)}</h3>
+          <p class="muted">${escapeHtml(message)}</p>
+        </div>
+      `;
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function setTagFilter(tag) {
+      state.tag = tag;
+      refs.tagFilter.value = tag;
+      if (refs.dialog.open) refs.dialog.close();
+      switchTab("library");
+      renderLibrary();
+    }
+
+    function resetLibraryFilters() {
+      state.libraryQuery = "";
+      state.type = "";
+      state.tag = "";
+      state.sort = "featured";
+      refs.librarySearch.value = "";
+      refs.typeFilter.value = "";
+      refs.tagFilter.value = "";
+      refs.sortControl.value = "featured";
+      renderLibrary();
+    }
+
+    function populateFilters() {
+      const types = [...new Set(items.map((item) => item.type))].sort();
+      const tags = [...new Set(items.flatMap((item) => item.tags))].sort();
+
+      refs.typeFilter.innerHTML += types.map((type) => `<option value="${escapeHtml(type)}">${escapeHtml(type)}</option>`).join("");
+      refs.tagFilter.innerHTML += tags.map((tag) => `<option value="${tag}">${tag}</option>`).join("");
+    }
+
+    function handleDelegatedClick(event) {
+      const tabTarget = event.target.closest("[data-tab-target]");
+      if (tabTarget) {
+        switchTab(tabTarget.dataset.tabTarget);
+        return;
+      }
+
+      const itemTarget = event.target.closest("[data-item-id]");
+      if (itemTarget) {
+        openItem(itemTarget.dataset.itemId);
+        return;
+      }
+
+      const tagTarget = event.target.closest("[data-filter-tag]");
+      if (tagTarget) {
+        event.preventDefault();
+        event.stopPropagation();
+        setTagFilter(tagTarget.dataset.filterTag);
+        return;
+      }
+
+      const pathTarget = event.target.closest("[data-path-id]");
+      if (pathTarget) {
+        openPath(pathTarget.dataset.pathId);
+        return;
+      }
+
+      const clearTarget = event.target.closest("[data-clear-filter]");
+      if (clearTarget) {
+        const key = clearTarget.dataset.clearFilter;
+        if (key === "query") {
+          state.libraryQuery = "";
+          refs.librarySearch.value = "";
+        }
+        if (key === "type") {
+          state.type = "";
+          refs.typeFilter.value = "";
+        }
+        if (key === "tag") {
+          state.tag = "";
+          refs.tagFilter.value = "";
+        }
+        renderLibrary();
+        return;
+      }
+
+      const placeholderOpen = event.target.closest("[data-open-placeholder]");
+      if (placeholderOpen) {
+        showToast(`${placeholderOpen.dataset.openPlaceholder} is a prototype action.`);
+        return;
+      }
+
+      const favorite = event.target.closest("[data-add-favorite]");
+      if (favorite) {
+        favorite.textContent = favorite.textContent.includes("Saved") ? "♡ Save to favorites" : "♥ Saved";
+        showToast(favorite.textContent.includes("Saved") ? "Saved to your cozy shelf." : "Removed from favorites.");
+      }
+    }
+
+    function handleProgressChange(event) {
+      const checkbox = event.target.closest("[data-step-key]");
+      if (!checkbox) return;
+      state.completed[checkbox.dataset.stepKey] = checkbox.checked;
+      saveProgress();
+      const path = paths.find((entry) => entry.id === state.activePath);
+      if (path) renderPathDetail(path);
+      renderHome();
+      renderPaths();
+    }
+
+    refs.tabs.forEach((tab, index) => {
+      tab.addEventListener("click", () => switchTab(tab.dataset.tab));
+      tab.addEventListener("keydown", (event) => {
+        if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+        event.preventDefault();
+        let nextIndex = index;
+        if (event.key === "ArrowRight") nextIndex = (index + 1) % refs.tabs.length;
+        if (event.key === "ArrowLeft") nextIndex = (index - 1 + refs.tabs.length) % refs.tabs.length;
+        if (event.key === "Home") nextIndex = 0;
+        if (event.key === "End") nextIndex = refs.tabs.length - 1;
+        refs.tabs[nextIndex].focus();
+        switchTab(refs.tabs[nextIndex].dataset.tab);
+      });
+    });
+
+    refs.librarySearch.addEventListener("input", (event) => {
+      state.libraryQuery = event.target.value;
+      renderLibrary();
+    });
+
+    refs.typeFilter.addEventListener("change", (event) => {
+      state.type = event.target.value;
+      renderLibrary();
+    });
+
+    refs.tagFilter.addEventListener("change", (event) => {
+      state.tag = event.target.value;
+      renderLibrary();
+    });
+
+    refs.sortControl.addEventListener("change", (event) => {
+      state.sort = event.target.value;
+      renderLibrary();
+    });
+
+    refs.gridViewBtn.addEventListener("click", () => {
+      state.view = "grid";
+      refs.gridViewBtn.setAttribute("aria-pressed", "true");
+      refs.listViewBtn.setAttribute("aria-pressed", "false");
+      renderLibrary();
+    });
+
+    refs.listViewBtn.addEventListener("click", () => {
+      state.view = "list";
+      refs.gridViewBtn.setAttribute("aria-pressed", "false");
+      refs.listViewBtn.setAttribute("aria-pressed", "true");
+      renderLibrary();
+    });
+
+    refs.clearFiltersBtn.addEventListener("click", resetLibraryFilters);
+
+    refs.themeToggle.addEventListener("click", () => {
+      const nextTheme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+      applyTheme(nextTheme);
+      showToast(nextTheme === "dark" ? "Dark mode is on. Cozy night study activated." : "Light mode is on. Sakura daylight restored.");
+    });
+
+    refs.globalSearchForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      state.searchQuery = refs.globalSearchInput.value.trim();
+      refs.searchPageInput.value = state.searchQuery;
+      switchTab("search");
+      renderSearch();
+    });
+
+    refs.searchPageForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      state.searchQuery = refs.searchPageInput.value.trim();
+      refs.globalSearchInput.value = state.searchQuery;
+      renderSearch();
+    });
+
+    refs.searchPageInput.addEventListener("input", (event) => {
+      state.searchQuery = event.target.value;
+      refs.globalSearchInput.value = state.searchQuery;
+      renderSearch();
+    });
+
+    refs.dialog.addEventListener("click", closeDialogOnBackdrop);
+    refs.dialog.addEventListener("close", () => {
+      refs.modalContent.querySelectorAll("audio").forEach((audio) => {
+        if (audio.src.startsWith("blob:")) URL.revokeObjectURL(audio.src);
+      });
+    });
+
+    document.addEventListener("click", handleDelegatedClick);
+    document.addEventListener("change", handleProgressChange);
+
+    initializeThemeControl();
+    populateFilters();
+    renderHome();
+    renderPaths();
+    renderLibrary();
+
+    document.getElementById("homeItemCount").textContent = items.length;
+    document.getElementById("homeAudioCount").textContent = items.filter((item) => item.audio).length;
+  </script>
+</body>
+</html>
